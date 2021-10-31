@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table (name = "rodoviarias")
 public class Rodoviaria implements Serializable
@@ -26,6 +28,7 @@ public class Rodoviaria implements Serializable
 
     private String tipo;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn (name = "cidade_id")
     private Cidade cidade;
