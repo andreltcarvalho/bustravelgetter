@@ -6,11 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table (name = "rodoviarias")
@@ -22,94 +18,60 @@ public class Rodoviaria implements Serializable
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome_display;
+    private String value;
 
-    private String nome_pesquisa;
-
-    private String tipo;
-
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn (name = "cidade_id")
-    private Cidade cidade;
+    private String tag;
 
     public Rodoviaria()
     {
-        super();
     }
 
+    /**
+     * @return the id
+     */
     public Long getId()
     {
         return id;
     }
 
+    /**
+     * @param id the id to set
+     */
     public void setId(Long id)
     {
         this.id = id;
     }
 
     /**
-     * @return the nome_display
+     * @return the value
      */
-    public String getNome_display()
+    public String getValue()
     {
-        return nome_display;
+        return value;
     }
 
     /**
-     * @param nome_display the nome_display to set
+     * @param value the value to set
      */
-    public void setNome_display(String nome_display)
+    public void setValue(String value)
     {
-        this.nome_display = nome_display;
+        this.value = value;
     }
 
     /**
-     * @return the nome_pesquisa
+     * @return the tag
      */
-    public String getNome_pesquisa()
+    public String getTag()
     {
-        return nome_pesquisa;
+        return tag;
     }
 
     /**
-     * @param nome_pesquisa the nome_pesquisa to set
+     * @param tag the tag to set
      */
-    public void setNome_pesquisa(String nome_pesquisa)
+    public void setTag(String tag)
     {
-        this.nome_pesquisa = nome_pesquisa;
-    }
-
-    /**
-     * @return the tipo
-     */
-    public String getTipo()
-    {
-        return tipo;
-    }
-
-    /**
-     * @param tipo the tipo to set
-     */
-    public void setTipo(String tipo)
-    {
-        this.tipo = tipo;
-    }
-
-    /**
-     * @return the cidade
-     */
-    public Cidade getCidade()
-    {
-        return cidade;
-    }
-
-    /**
-     * @param cidade the cidade to set
-     */
-    public void setCidade(Cidade cidade)
-    {
-        this.cidade = cidade;
+        this.tag = tag;
     }
 
     /**
@@ -147,18 +109,14 @@ public class Rodoviaria implements Serializable
     @Override
     public String toString()
     {
-        return "Rodoviaria [id=" + id + ", nome_display=" + nome_display + ", nome_pesquisa=" + nome_pesquisa + ", tipo=" + tipo
-                + ", cidade=" + cidade + "]";
+        return "Rodoviaria [id=" + id + ", nome_display=" + value + ", nome_pesquisa=" + tag;
     }
 
-    public Rodoviaria(Long id, String nome_display, String nome_pesquisa, String tipo, Cidade cidade)
+    public Rodoviaria(Long id, String value, String tag)
     {
-
         this.id = id;
-        this.nome_display = nome_display;
-        this.nome_pesquisa = nome_pesquisa;
-        this.tipo = tipo;
-        this.cidade = cidade;
+        this.value = value;
+        this.tag = tag;
     }
 
 }
