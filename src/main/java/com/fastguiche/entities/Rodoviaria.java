@@ -26,9 +26,6 @@ public class Rodoviaria implements Serializable
     {
     }
 
-    /**
-     * @return the id
-     */
     public Long getId()
     {
         return id;
