@@ -22,6 +22,13 @@ public class Rodoviaria implements Serializable
 
     private String tag;
 
+    public Rodoviaria(Long id, String value, String tag)
+    {
+        this.id = id;
+        this.value = value;
+        this.tag = tag;
+    }
+
     public Rodoviaria()
     {
     }
@@ -31,49 +38,31 @@ public class Rodoviaria implements Serializable
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(Long id)
     {
         this.id = id;
     }
 
-    /**
-     * @return the value
-     */
     public String getValue()
     {
         return value;
     }
 
-    /**
-     * @param value the value to set
-     */
     public void setValue(String value)
     {
         this.value = value;
     }
 
-    /**
-     * @return the tag
-     */
     public String getTag()
     {
         return tag;
     }
 
-    /**
-     * @param tag the tag to set
-     */
     public void setTag(String tag)
     {
         this.tag = tag;
     }
 
-    /**
-     * @return the serialversionuid
-     */
     public static long getSerialversionuid()
     {
         return serialVersionUID;
@@ -108,12 +97,4 @@ public class Rodoviaria implements Serializable
     {
         return "Rodoviaria [id=" + id + ", nome_display=" + value + ", nome_pesquisa=" + tag;
     }
-
-    public Rodoviaria(Long id, String value, String tag)
-    {
-        this.id = id;
-        this.value = value;
-        this.tag = tag;
-    }
-
 }
