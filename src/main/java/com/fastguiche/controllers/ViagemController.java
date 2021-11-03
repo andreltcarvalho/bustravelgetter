@@ -23,6 +23,7 @@ public class ViagemController
 
     private static String BRAZIL_BUS_TRAVEL_URL = "https://brazilbustravel.com/bus/";
     private static String QUERO_PASSAGEM_URL = "https://queropassagem.com.br/onibus/";
+    private String usedServer;
     private String rodoviariaOrigem;
     private String rodoviariaDestino;
     private final HttpClient httpClient = HttpClient.newBuilder()
@@ -42,7 +43,7 @@ public class ViagemController
     {
         final HttpResponse<String> response = enviarRequest();
 
-        final String parsedBody = pegarBodyParseado(response.body());
+        final String parsedBody = parseBody(response.body());
         final ObjectMapper mapper = new ObjectMapper();
         final List<HashMap<String, Object>> map = mapper.readValue(parsedBody, List.class);
         System.out.println(map);
@@ -51,18 +52,20 @@ public class ViagemController
 
     private HttpResponse<String> enviarRequest() throws IOException, InterruptedException
     {
+        usedServer = "qp";
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create(QUERO_PASSAGEM_URL + montarUriDeViagem("qp")))
+                .uri(URI.create(QUERO_PASSAGEM_URL + montarUriDeViagem(usedServer)))
                 .setHeader("User-Agent", "Fast Guiche")
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 200)
         {
+            usedServer = "bbt";
             request = HttpRequest.newBuilder()
                     .GET()
-                    .uri(URI.create(BRAZIL_BUS_TRAVEL_URL + montarUriDeViagem("bbt")))
+                    .uri(URI.create(BRAZIL_BUS_TRAVEL_URL + montarUriDeViagem(usedServer)))
                     .setHeader("User-Agent", "Fast Guiche")
                     .build();
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -70,10 +73,18 @@ public class ViagemController
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    private String pegarBodyParseado(String body)
+    private String parseBody(String body)
     {
-        return body.substring(body.lastIndexOf("/ld+json'>"),
-                body.indexOf("</script></head><body class=\"main-body-busca layout-2021\" >")).replace("/ld+json'>", "");
+        if (usedServer.equals("qp"))
+        {
+            return body.substring(body.lastIndexOf("/ld+json'>"),
+                    body.indexOf("</script></head><body class=\"main-body-busca layout-2021\" >")).replace("/ld+json'>", "");
+
+        }
+        return body.substring(body.lastIndexOf("/ld+json\">"), body.indexOf(" <script>(function (w, d, s, l, i)"))
+                .replace("/ld+json\">", "")
+                .replace("</script>", "");
+
     }
 
     private String montarUriDeViagem(String empresa)
