@@ -1,6 +1,5 @@
 package com.fastguiche.controllers;
 
-import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,25 +19,32 @@ public class ViagemController
 
     private String rodoviariaOrigem;
     private String rodoviariaDestino;
+    private String partida;
 
     @GetMapping
     public ResponseEntity<String> getViagens(@RequestParam ("origem") String origem,
-                                             @RequestParam ("destino") String destino) throws Exception
+                                             @RequestParam ("destino") String destino,
+                                             @RequestParam ("partida") String partida) throws Exception
     {
         this.rodoviariaOrigem = origem;
         this.rodoviariaDestino = destino;
+        this.partida = partida;
         return ResponseEntity.ok().body(buscarViagem());
     }
 
     private String buscarViagem() throws Exception
     {
 
-        final HttpResponse<String> response = Operacoes.enviarRequest(rodoviariaOrigem, rodoviariaDestino);
-        final String parsedBody = Operacoes.parseBody(response.body());
+        final String response = Operacoes.enviarRequest(rodoviariaOrigem, rodoviariaDestino, partida);
+
         final ObjectMapper mapper = new ObjectMapper();
-        final List<HashMap<String, Object>> map = mapper.readValue(parsedBody, List.class);
-        System.out.println(map);
-        return parsedBody;
+        final List<HashMap<String, Object>> list = mapper.readValue(response, List.class);
+        list.forEach(mapa ->
+        {
+            System.out.println(mapa);
+        });
+
+        return response;
     }
 
 }

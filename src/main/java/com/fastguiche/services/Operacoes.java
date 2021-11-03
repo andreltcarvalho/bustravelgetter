@@ -20,12 +20,12 @@ public class Operacoes
 {
     private static String BRAZIL_BUS_TRAVEL_URL = "https://brazilbustravel.com/bus/";
     private static String QUERO_PASSAGEM_URL = "https://queropassagem.com.br/onibus/";
-    private static String usedServer;
+    private static String PARTIDA_QUERY_PARAMETER = "?partida=";
     private final static HttpClient httpClient = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
             .build();
 
-    public static String parseBody(String body)
+    public static String parseBody(String body, String usedServer)
     {
         if (usedServer.equals("qp"))
         {
@@ -39,22 +39,22 @@ public class Operacoes
 
     }
 
-    public static String montarUriDeViagem(String empresa, String origem, String destino)
+    public static String montarUriDeViagem(String usedServer, String origem, String destino, String partida)
     {
-        if (empresa.equals("qp"))
+        if (usedServer.equals("qp"))
         {
-            return origem + "-para-" + destino;
+            return origem + "-para-" + destino + PARTIDA_QUERY_PARAMETER + partida;
         }
-        return origem + "-to-" + destino;
+        return origem + "-to-" + destino + PARTIDA_QUERY_PARAMETER + partida;
     }
 
-    public static HttpResponse<String> enviarRequest(String origem, String destino) throws IOException,
-                                                                                    InterruptedException
+    public static String enviarRequest(String origem, String destino, String partida) throws IOException,
+                                                                                      InterruptedException
     {
-        usedServer = "qp";
+        String usedServer = "qp";
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create(QUERO_PASSAGEM_URL + Operacoes.montarUriDeViagem(usedServer, origem, destino)))
+                .uri(URI.create(QUERO_PASSAGEM_URL + Operacoes.montarUriDeViagem(usedServer, origem, destino, partida)))
                 .setHeader("User-Agent", "Fast Guiche")
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -64,11 +64,11 @@ public class Operacoes
             usedServer = "bbt";
             request = HttpRequest.newBuilder()
                     .GET()
-                    .uri(URI.create(BRAZIL_BUS_TRAVEL_URL + Operacoes.montarUriDeViagem(usedServer, origem, destino)))
+                    .uri(URI.create(BRAZIL_BUS_TRAVEL_URL + Operacoes.montarUriDeViagem(usedServer, origem, destino, partida)))
                     .setHeader("User-Agent", "Fast Guiche")
                     .build();
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         }
-        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        return parseBody(response.body(), usedServer);
     }
 }
