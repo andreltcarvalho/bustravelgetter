@@ -98,8 +98,6 @@ public class ViagemController
                 json.append("dadosViagem", mapa);
             }
         });
-
         return json.toString();
     }
-
 }

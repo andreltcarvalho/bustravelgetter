@@ -29,14 +29,21 @@ public class Operacoes
     {
         if (usedServer.equals("qp"))
         {
-            return body.substring(body.lastIndexOf("/ld+json'>"),
-                    body.indexOf("</script></head><body class=\"main-body-busca layout-2021\" >")).replace("/ld+json'>", "");
+            final int start = body.lastIndexOf("/ld+json'>");
+            final int end = body.indexOf("</script></head><body class=\"main-body-busca layout-2021\" >");
+
+            return body.substring(start, end).replace("/ld+json'>", "");
 
         }
-        return body.substring(body.lastIndexOf("/ld+json\">"), body.indexOf(" <script>(function (w, d, s, l, i)"))
-                .replace("/ld+json\">", "")
-                .replace("</script>", "");
-
+        else if (usedServer.equals("bbt"))
+        {
+            final int start = body.lastIndexOf("/ld+json\">");
+            final int end = body.indexOf(" <script>(function (w, d, s, l, i)");
+            return body.substring(start, end)
+                    .replace("/ld+json\">", "")
+                    .replace("</script>", "");
+        }
+        return "";
     }
 
     public static String montarUriDeViagem(String usedServer, String origem, String destino, String partida)
@@ -45,7 +52,11 @@ public class Operacoes
         {
             return origem + "-para-" + destino + PARTIDA_QUERY_PARAMETER + partida;
         }
-        return origem + "-to-" + destino + PARTIDA_QUERY_PARAMETER + partida;
+        if (usedServer.equals("bbt"))
+        {
+            return origem + "-to-" + destino + PARTIDA_QUERY_PARAMETER + partida;
+        }
+        return "";
     }
 
     public static String enviarRequest(String origem, String destino, String partida) throws IOException,
