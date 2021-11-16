@@ -23,8 +23,8 @@ public class OperacoesJSON
                 final String horaChegada = mapa.get("arrivalTime").toString();
                 mapa.remove("arrivalTime");
                 mapa.put("data", OperacoesData.prepararDataDaViagem(horaIda));
-                mapa.put("ida", OperacoesData.prepararHoraDeVolta(horaChegada));
-                mapa.put("chegada", OperacoesData.prepararHoraDeIda(horaIda));
+                mapa.put("ida", OperacoesData.prepararHoraDeIda(horaIda));
+                mapa.put("chegada", OperacoesData.prepararHoraDeVolta(horaChegada));
 
                 mapa.remove("arrivalBusStop");
                 mapa.remove("departureBusStop");

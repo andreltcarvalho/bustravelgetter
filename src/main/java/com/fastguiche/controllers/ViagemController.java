@@ -39,7 +39,8 @@ public class ViagemController
         }
         catch (final Exception e)
         {
-            return ResponseEntity.badRequest().body("Erro");
+
+            return ResponseEntity.badRequest().body("Erro:\n" + e.getMessage());
         }
     }
 
@@ -57,7 +58,6 @@ public class ViagemController
 
     private String buscarViagem() throws Exception
     {
-
         final String response = OperacoesHttp.enviarRequest(rodoviariaOrigem, rodoviariaDestino, partida);
         final ObjectMapper mapper = new ObjectMapper();
         final List<HashMap<String, Object>> list = mapper.readValue(response, List.class);

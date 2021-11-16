@@ -20,12 +20,11 @@ public class OperacoesHttp
     private static String SCRIPT_TAG = "</script>";
     private static String PARTIDA_QUERY_PARAMETER = "?partida=";
 
-    private final static HttpClient httpClient = HttpClient.newBuilder()
-            .version(HttpClient.Version.HTTP_2)
-            .build();
-
     public static String enviarRequest(String origem, String destino, String partida) throws IOException, InterruptedException
     {
+        final HttpClient httpClient = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_2)
+                .build();
         String usedServer = QUERO_PASSAGEM;
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -50,14 +49,16 @@ public class OperacoesHttp
 
     public static String parseBody(String body, String usedServer)
     {
+
         if (usedServer.equals(QUERO_PASSAGEM))
         {
             final int start = body.indexOf(INICIO_TAG_JSON);
             final int end = body.indexOf(FIM_TAG_JSON_QUERO_PASSAGEM);
-            return body.substring(start, end).replace(INICIO_TAG_JSON, "");
+            body = body.substring(start, end).replace(INICIO_TAG_JSON, "");
+            return body;
         }
 
-        else if (usedServer.equals(BRAZIL_BUS_TRAVEL))
+        if (usedServer.equals(BRAZIL_BUS_TRAVEL))
         {
             final int start = body.indexOf(INICIO_TAG_JSON);
             final int end = body.indexOf(FIM_TAG_JSON_BRAZIL_BUS_TRAVEL);
