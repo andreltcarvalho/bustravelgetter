@@ -1,6 +1,7 @@
 package com.fastguiche.controllers;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.json.JSONObject;
@@ -11,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fastguiche.services.Operacoes;
-import com.mysql.cj.util.StringUtils;
+import com.fastguiche.operacoes.OperacoesData;
+import com.fastguiche.operacoes.OperacoesHttp;
 
 @RestController
 @RequestMapping ("/viagens")
@@ -23,81 +24,62 @@ public class ViagemController
     private String rodoviariaDestino;
     private String partida;
 
-    private String getArrivalDate(String date)
-    {
-        final String newDate = date.substring(date.lastIndexOf("T"));
-        final String dates[] = newDate.split(":");
-        final String horaChegada = dates[0].replace("T", "");
-        Integer horaSoma = Integer.parseInt(horaChegada);
-        String horaResponse = "";
-        if (horaChegada.equals("00"))
-        {
-            horaResponse = "21";
-        }
-        if (horaChegada.equals("01"))
-        {
-            horaResponse = "22";
-        }
-        if (horaChegada.equals("02"))
-        {
-            horaResponse = "23";
-        }
-
-        if (StringUtils.isNullOrEmpty(horaResponse))
-        {
-            horaSoma = horaSoma - 3;
-            if (horaSoma < 10)
-            {
-                horaResponse = "0" + horaSoma;
-            }
-            else
-            {
-                horaResponse = horaSoma + "";
-            }
-        }
-
-        final char[] chegadas = horaResponse.toCharArray();
-
-        final StringBuilder builder = new StringBuilder();
-        builder.append(date.substring(date.indexOf("T")).replace("T", "").substring(0, 5));
-        builder.setCharAt(0, chegadas[0]);
-        builder.setCharAt(1, chegadas[1]);
-        return builder.toString();
-    }
-
     @GetMapping
     public ResponseEntity<String> getViagens(@RequestParam ("origem") String origem,
                                              @RequestParam ("destino") String destino,
                                              @RequestParam ("partida") String partida) throws Exception
     {
+        setarCamposValidos(origem, destino, partida);
+
+        return ResponseEntity.ok().body(buscarViagem());
+    }
+
+    private void setarCamposValidos(String origem, String destino, String partida)
+    {
         this.rodoviariaOrigem = origem;
         this.rodoviariaDestino = destino;
         this.partida = partida;
-        return ResponseEntity.ok().body(buscarViagem());
     }
 
     private String buscarViagem() throws Exception
     {
 
-        final String response = Operacoes.enviarRequest(rodoviariaOrigem, rodoviariaDestino, partida);
+        final String response = OperacoesHttp.enviarRequest(rodoviariaOrigem, rodoviariaDestino, partida);
 
         final ObjectMapper mapper = new ObjectMapper();
         final List<HashMap<String, Object>> list = mapper.readValue(response, List.class);
         final JSONObject json = new JSONObject();
         list.forEach(mapa ->
         {
+            mapa.remove("@type");
+            mapa.remove("@context");
             if (!mapa.equals(list.get(0)))
             {
+                final String horaIda = mapa.get("departureTime").toString();
+                mapa.remove("departureTime");
+
                 final String horaChegada = mapa.get("arrivalTime").toString();
-                mapa.put("arrivalTime", getArrivalDate(horaChegada));
-                System.out.println(mapa.get(("arrivalTime")));
-                json.append("itinerario", mapa);
+                mapa.remove("arrivalTime");
+                mapa.put("chegada", OperacoesData.prepararHoraDeIda(horaIda));
+                mapa.put("data", OperacoesData.prepararDataDaViagem(horaIda));
+                mapa.put("ida", OperacoesData.prepararHoraDeVolta(horaChegada));
+                mapa.remove("arrivalBusStop");
+                mapa.remove("departureBusStop");
+                final LinkedHashMap<String, String> provider = (LinkedHashMap<String, String>) mapa.get("provider");
+                mapa.remove("provider");
+                mapa.put("empresa", provider.get("name"));
+                json.append("Itinerarios", mapa);
+
+                // System.out.println(mapa.toString());
             }
             else
             {
-                json.append("dadosViagem", mapa);
+                mapa.remove("offers");
+                mapa.remove("name");
+                json.append("dadosDaViagem", mapa);
             }
         });
         return json.toString();
     }
+
 }
