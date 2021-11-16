@@ -44,6 +44,8 @@ public class OperacoesData
 
         final char[] chegadas = horaResponse.toCharArray();
 
+        //aqui eu pego a data inicial e substituo nela os novos valores
+        // com datas reais e formatadas.
         final StringBuilder builder = new StringBuilder();
         builder.append(data.substring(data.indexOf("T")).replace("T", "").substring(0, 5));
         builder.setCharAt(0, chegadas[0]);
