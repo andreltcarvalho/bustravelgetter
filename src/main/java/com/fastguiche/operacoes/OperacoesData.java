@@ -1,5 +1,10 @@
 package com.fastguiche.operacoes;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import com.mysql.cj.util.StringUtils;
 
 public class OperacoesData
@@ -61,8 +66,32 @@ public class OperacoesData
 
     public static String prepararHoraDeIda(String hora)
     {
-
         return hora.substring(hora.indexOf("T"), hora.indexOf("T") + 6).replace("T", "");
+    }
 
+    public static String pegarHoraValida(String partida)
+    {
+        if (!partida.matches("([0-9]{2})/([0-9]{2})/([0-9]{4})"))
+        {
+            return "";
+        }
+
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        final LocalDate hoje = LocalDate.now();
+        final String hojeFormatado = hoje.format(formatter);
+
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        try
+        {
+            if (sdf.parse(partida).before(sdf.parse(hojeFormatado)))
+            {
+                return hojeFormatado;
+            }
+            return partida;
+        }
+        catch (final ParseException e)
+        {
+            return "";
+        }
     }
 }

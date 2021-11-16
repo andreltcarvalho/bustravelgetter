@@ -4,12 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fastguiche.operacoes.OperacoesData;
 import com.fastguiche.operacoes.OperacoesHttp;
 import com.fastguiche.operacoes.OperacoesJSON;
 
@@ -26,7 +28,11 @@ public class ViagemController
                                              @RequestParam ("destino") String destino,
                                              @RequestParam ("partida") String partida) throws Exception
     {
-        setarCamposValidos(origem, destino, partida);
+        if (setarCamposValidos(origem, destino, partida) == false)
+        {
+            return ResponseEntity.badRequest().body("Erro: Data Inválida.");
+        }
+
         try
         {
             return ResponseEntity.ok().body(buscarViagem());
@@ -37,18 +43,23 @@ public class ViagemController
         }
     }
 
-    private void setarCamposValidos(String origem, String destino, String partida)
+    private boolean setarCamposValidos(String origem, String destino, String partida)
     {
         this.rodoviariaOrigem = origem;
         this.rodoviariaDestino = destino;
+        this.partida = OperacoesData.pegarHoraValida(partida);
         this.partida = partida;
+        if (StringUtils.isEmpty(this.partida))
+        {
+            return false;
+        }
+        return true;
     }
 
     private String buscarViagem() throws Exception
     {
 
         final String response = OperacoesHttp.enviarRequest(rodoviariaOrigem, rodoviariaDestino, partida);
-
         final ObjectMapper mapper = new ObjectMapper();
         final List<HashMap<String, Object>> list = mapper.readValue(response, List.class);
 

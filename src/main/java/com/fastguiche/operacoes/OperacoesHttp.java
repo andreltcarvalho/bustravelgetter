@@ -27,12 +27,14 @@ public class OperacoesHttp
     public static String enviarRequest(String origem, String destino, String partida) throws IOException, InterruptedException
     {
         String usedServer = QUERO_PASSAGEM;
+
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(QUERO_PASSAGEM_URL + OperacoesHttp.montarUriDeViagem(usedServer, origem, destino, partida)))
                 .setHeader("User-Agent", "Fast Guiche")
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
         if (response.statusCode() != 200)
         {
             usedServer = BRAZIL_BUS_TRAVEL;

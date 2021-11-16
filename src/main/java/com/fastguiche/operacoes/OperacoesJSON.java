@@ -22,9 +22,10 @@ public class OperacoesJSON
 
                 final String horaChegada = mapa.get("arrivalTime").toString();
                 mapa.remove("arrivalTime");
-                mapa.put("chegada", OperacoesData.prepararHoraDeIda(horaIda));
                 mapa.put("data", OperacoesData.prepararDataDaViagem(horaIda));
                 mapa.put("ida", OperacoesData.prepararHoraDeVolta(horaChegada));
+                mapa.put("chegada", OperacoesData.prepararHoraDeIda(horaIda));
+
                 mapa.remove("arrivalBusStop");
                 mapa.remove("departureBusStop");
                 final LinkedHashMap<String, String> provider = (LinkedHashMap<String, String>) mapa.get("provider");
