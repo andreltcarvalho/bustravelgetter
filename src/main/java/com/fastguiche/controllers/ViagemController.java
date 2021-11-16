@@ -48,7 +48,6 @@ public class ViagemController
         this.rodoviariaOrigem = origem;
         this.rodoviariaDestino = destino;
         this.partida = OperacoesData.pegarHoraValida(partida);
-        this.partida = partida;
         if (StringUtils.isEmpty(this.partida))
         {
             return false;
