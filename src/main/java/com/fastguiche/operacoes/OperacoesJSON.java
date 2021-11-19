@@ -39,7 +39,9 @@ public class OperacoesJSON
                 mapa.remove("name");
                 json.append("dadosDaViagem", mapa);
             }
+            System.out.println("Map from response: " + mapa);
         });
+
         return json.toString();
     }
 }

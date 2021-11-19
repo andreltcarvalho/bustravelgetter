@@ -23,7 +23,7 @@ public class ViagemController
     private String rodoviariaDestino;
     private String partida;
 
-    @GetMapping
+    @GetMapping ()
     public ResponseEntity<String> getViagens(@RequestParam ("origem") String origem,
                                              @RequestParam ("destino") String destino,
                                              @RequestParam ("partida") String partida) throws Exception
@@ -39,7 +39,7 @@ public class ViagemController
         }
         catch (final Exception e)
         {
-
+            e.printStackTrace();
             return ResponseEntity.badRequest().body("Erro:\n" + e.getMessage());
         }
     }
