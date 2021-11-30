@@ -26,7 +26,7 @@ public class ViagemController
     @GetMapping ()
     public ResponseEntity<String> getViagens(@RequestParam ("origem") String origem,
                                              @RequestParam ("destino") String destino,
-                                             @RequestParam ("partida") String partida) throws Exception
+                                             @RequestParam ("partida") String partida)
     {
         if (setarCamposValidos(origem, destino, partida) == false)
         {
@@ -61,8 +61,6 @@ public class ViagemController
         final String response = OperacoesHttp.enviarRequest(rodoviariaOrigem, rodoviariaDestino, partida);
         final ObjectMapper mapper = new ObjectMapper();
         final List<HashMap<String, Object>> list = mapper.readValue(response, List.class);
-
         return OperacoesJSON.pegarJsonFormatado(list);
     }
-
 }

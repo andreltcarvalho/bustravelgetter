@@ -35,7 +35,7 @@ public class OperacoesHttp
             response = prepararRequest(BRAZIL_BUS_TRAVEL, origem, destino, partida);
             return parseBody(response.body(), BRAZIL_BUS_TRAVEL);
         }
-        System.out.println("Response headers: " + response.headers());
+        System.out.println("Response headers: " + response.headers() + "\n");
         return parseBody(response.body(), QUERO_PASSAGEM);
     }
 
@@ -76,10 +76,13 @@ public class OperacoesHttp
     {
         if (usedServer.equals(QUERO_PASSAGEM))
         {
+            System.out.println(
+                    "\n" + "Request: " + QUERO_PASSAGEM_URL + origem + "-para-" + destino + PARTIDA_QUERY_PARAMETER + partida + "\n");
             return QUERO_PASSAGEM_URL + origem + "-para-" + destino + PARTIDA_QUERY_PARAMETER + partida;
         }
         if (usedServer.equals(BRAZIL_BUS_TRAVEL))
         {
+            System.out.println("Request: " + BRAZIL_BUS_TRAVEL_URL + origem + "-to-" + destino + PARTIDA_QUERY_PARAMETER + partida + "\n");
             return BRAZIL_BUS_TRAVEL_URL + origem + "-to-" + destino + PARTIDA_QUERY_PARAMETER + partida;
         }
         return "";

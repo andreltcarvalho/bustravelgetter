@@ -4,15 +4,17 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.json.JSONObject;
+import org.json.JSONArray;
 
 public class OperacoesJSON
 {
+
     public static String pegarJsonFormatado(List<HashMap<String, Object>> list)
     {
-        final JSONObject json = new JSONObject();
+        final JSONArray json = new JSONArray();
         list.forEach(mapa ->
         {
+
             mapa.remove("@type");
             mapa.remove("@context");
             if (!mapa.equals(list.get(0)))
@@ -31,13 +33,7 @@ public class OperacoesJSON
                 final LinkedHashMap<String, String> provider = (LinkedHashMap<String, String>) mapa.get("provider");
                 mapa.remove("provider");
                 mapa.put("empresa", provider.get("name"));
-                json.append("Itinerarios", mapa);
-            }
-            else
-            {
-                mapa.remove("offers");
-                mapa.remove("name");
-                json.append("dadosDaViagem", mapa);
+                json.put(mapa);
             }
             System.out.println("Map from response: " + mapa);
         });
